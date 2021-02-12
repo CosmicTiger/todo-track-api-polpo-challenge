@@ -1,3 +1,5 @@
+const { validationResult } = require('express-validator');
+
 exports.getTasks = (req, res, next) => {
     let date = new Date();
 
@@ -24,8 +26,18 @@ exports.getTasks = (req, res, next) => {
 };
 
 exports.createTasks = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res
+            .status(422)
+            .json({
+                message: 'Validation failed, entered data is incorrect.',
+                errors: errors.array()
+            });
+    }
+
     const title = req.body.title;
-    const content = req.body.content; // This is comments
+    const comments = req.body.comments; // This is comments
     const inbox = req.body.inbox;
     const getDoneAt = req.body.getDoneAt;
     const deadline = req.body.deadline;
@@ -41,10 +53,10 @@ exports.createTasks = (req, res, next) => {
         task: {
             _id: new Date().toISOString(),
             title: title,
-            comments: content,
+            comments: comments,
             inbox: inbox,
             createdAt: date,
-            getDoneAt: date,
+            getDoneAt: getDoneAt,
             deadline: deadline,
             labels: labels,
             priority: priority,
