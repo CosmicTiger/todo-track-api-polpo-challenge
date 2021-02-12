@@ -10,10 +10,12 @@ exports.getTasks = (req, res, next) => {
         .countDocuments()
         .then(count => {
             totalItems = count;
-            return Task.find();
+            return Task.find()
+                .skip((currentPage - 1) * perPage)
+                .limit(perPage);
         })
         .then(tasks => {
-            res.status(200).json({ message: 'Fetched tasks successfully.', tasks: tasks })
+            res.status(200).json({ message: 'Fetched tasks successfully.', tasks: tasks, totalItems: totalItems })
         })
         .catch(err => {
             if (!err.statusCode) {
