@@ -22,4 +22,6 @@ router.put('/task/:taskId', [
     body('inbox').exists(),
 ], tasksController.updateTask);
 
+router.delete('/task/:taskId');
+
 module.exports = router;
