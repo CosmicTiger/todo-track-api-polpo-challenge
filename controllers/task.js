@@ -157,3 +157,27 @@ exports.updateTask = (req, res, next) => {
             next(err);
          });
 }
+
+exports.deleteTask = (req, res, next) => {
+    const taskId = req.params.taskId;
+    Task.findById(taskId)
+        .then(task => {
+            if (!task) {
+                const error = new Error('Could not find task.');
+                error.statusCode = 404;
+                throw error;
+            }
+
+            return Task.findByIdAndRemove(taskId);
+        })
+        .then(result => {
+            console.log(result);
+            res.status(200).json({ message: 'Deleted task.' });
+        })
+        .catch(err => {
+            if (!err.statusCode) { 
+                err.statusCode = 500;
+            }
+            next(err);
+        });
+}
