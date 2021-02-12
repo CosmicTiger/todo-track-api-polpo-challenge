@@ -3,27 +3,15 @@ const { validationResult } = require('express-validator');
 const Task = require('../models/task');
 
 exports.getTasks = (req, res, next) => {
-    let date = new Date();
-
-    res.json({
-        tasks: [{
-            _id: '1',
-            title: 'First Task',
-            comments: [ 'This is the first task!', 'This is a test' ],
-            inbox: 'To Do',
-            createdAt: date,
-            getDoneAt: date,
-            deadline: date.getHours() + ':' + date.getMinutes(),
-            labels: ['Usual'],
-            priority: 1,
-            isReminded: {
-                verification: false,
-                frequency: 0
-            },
-            user: {
-                name: 'nataliamartinez'
-            }
-        }]
+    Task.find()
+        .then(tasks => {
+        res.status(200).json({message: 'Fetched tasks successfully.', tasks: tasks})
+        })
+        .catch(err => {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     });
 };
 
@@ -76,3 +64,22 @@ exports.createTasks = (req, res, next) => {
 
     
 };
+
+exports.getTask = (req, res, next) => {
+    const taskId = req.params.taskId;
+    Task.findById(taskId)
+        .then(task => {
+            if (!task) {
+                const error = new Error('Could not find task.');
+                error.statusCode = 404;
+                throw error;
+            }
+            res.status(200).json({ message: 'Task fetched', task: task });
+        })
+        .catch(err => {
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
+}
