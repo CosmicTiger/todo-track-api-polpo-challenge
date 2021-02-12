@@ -15,6 +15,11 @@ router.post('/task', [
     body('user').exists()
 ], tasksController.createTasks);
 
-router.get('/task/:taskId', tasksController.getTask);
+router.get('/task/:taskId', tasksController.findTask);
+
+router.put('/task/:taskId', [
+    body('title').trim().isLength({ min: 5 }),
+    body('inbox').exists(),
+], tasksController.updateTask);
 
 module.exports = router;
