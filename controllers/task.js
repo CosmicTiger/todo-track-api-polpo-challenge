@@ -3,16 +3,24 @@ const { validationResult } = require('express-validator');
 const Task = require('../models/task');
 
 exports.getTasks = (req, res, next) => {
+    const currentPage = req.query.page || 1;
+    const perPage = 2;
+    let totalItems;
     Task.find()
+        .countDocuments()
+        .then(count => {
+            totalItems = count;
+            return Task.find();
+        })
         .then(tasks => {
-        res.status(200).json({message: 'Fetched tasks successfully.', tasks: tasks})
+            res.status(200).json({ message: 'Fetched tasks successfully.', tasks: tasks })
         })
         .catch(err => {
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
-    });
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        });
 };
 
 exports.createTasks = (req, res, next) => {
@@ -60,7 +68,7 @@ exports.createTasks = (req, res, next) => {
                 err.statusCode = 500;
             }
             next(err);
-         });
+        });
 };
 
 exports.findTask = (req, res, next) => {
@@ -127,7 +135,7 @@ exports.updateTask = (req, res, next) => {
                 err.statusCode = 500;
             }
             next(err);
-         });
+        });
 
     // Create post method in db
     const task = new Task({
@@ -155,7 +163,7 @@ exports.updateTask = (req, res, next) => {
                 err.statusCode = 500;
             }
             next(err);
-         });
+        });
 }
 
 exports.deleteTask = (req, res, next) => {
@@ -175,7 +183,7 @@ exports.deleteTask = (req, res, next) => {
             res.status(200).json({ message: 'Deleted task.' });
         })
         .catch(err => {
-            if (!err.statusCode) { 
+            if (!err.statusCode) {
                 err.statusCode = 500;
             }
             next(err);
