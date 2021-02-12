@@ -1,6 +1,25 @@
 exports.getTasks = (req, res, next) => {
+    let date = new Date();
+
     res.json({
-        tasks: [{ title: 'First Task', content: 'This is the first task!' }]
+        tasks: [{
+            _id: '1',
+            title: 'First Task',
+            comments: [ 'This is the first task!', 'This is a test' ],
+            inbox: 'To Do',
+            createdAt: date,
+            getDoneAt: date,
+            deadline: date.getHours() + ':' + date.getMinutes(),
+            label: ['Usual'],
+            priority: 1,
+            isReminded: {
+                verification: false,
+                frequency: 0
+            },
+            user: {
+                name: 'nataliamartinez'
+            }
+        }]
     });
 };
 
