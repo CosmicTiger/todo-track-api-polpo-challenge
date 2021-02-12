@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const todosRoutes = require('./routes/task');
 
@@ -17,4 +18,13 @@ app.use((req, res, next) => {
 
 app.use('/app', todosRoutes);
 
-app.listen(8080);
+mongoose
+    .connect(
+        'mongodb+srv://admin:bAHk0yLcYyJMrscs@cluster0.5kcrz.mongodb.net/Cluster0?retryWrites=true&w=majority',
+        { useNewUrlParser: true, useUnifiedTopology: true }
+    )
+    .then(result => {
+        console.log("Successfully connected with Database Cluster");
+        app.listen(8080);
+    })
+    .catch(err => console.log(err));

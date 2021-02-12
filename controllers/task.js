@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator');
 
+const Task = require('../models/task');
+
 exports.getTasks = (req, res, next) => {
     let date = new Date();
 
@@ -45,23 +47,32 @@ exports.createTasks = (req, res, next) => {
     const priority = req.body.priority;
     const isReminded = req.body.isReminded;
     const user = req.body.user;
-    let date = new Date();
 
     // Create post method in db
-    res.status(201).json({
-        message: 'Post created successfully!',
-        task: {
-            _id: new Date().toISOString(),
-            title: title,
-            comments: comments,
-            inbox: inbox,
-            createdAt: date,
-            getDoneAt: getDoneAt,
-            deadline: deadline,
-            labels: labels,
-            priority: priority,
-            isReminded: isReminded,
-            user: user
-        }
+    const task = new Task({
+        title: title,
+        comments: comments,
+        inbox: inbox,
+        getDoneAt: getDoneAt,
+        deadline: deadline,
+        labels: labels,
+        priority: priority,
+        isReminded: isReminded,
+        user: user
     });
+
+    task
+        .save()
+        .then(result => {
+            console.log(result);
+            res.status(201).json({
+                message: 'Post created successfully!',
+                task: result
+            });
+        })
+        .catch(err => {
+            console.log(err);
+         });
+
+    
 };
