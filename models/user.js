@@ -16,7 +16,7 @@ const userSchema = new Schema({
     },
     status: {
         type: String,
-        required: true
+        default: 'New user'
     },
     tasks: [{
         type: Schema.Types.ObjectId,
