@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 
 const Task = require('../models/task');
+const User = require('../models/user');
 
 exports.getTasks = (req, res, next) => {
     const currentPage = req.query.page || 1;
@@ -41,7 +42,7 @@ exports.createTasks = (req, res, next) => {
     const labels = req.body.labels;
     const priority = req.body.priority;
     const isReminded = req.body.isReminded;
-    const user = req.body.user;
+    let userPropietary;
 
     // Create post method in db
     const task = new Task({
@@ -53,16 +54,24 @@ exports.createTasks = (req, res, next) => {
         labels: labels,
         priority: priority,
         isReminded: isReminded,
-        user: user
+        user: req.userId
     });
 
     task
         .save()
         .then(result => {
-            console.log(result);
+            return User.findById(req.userId);
+        })
+        .then(user => {
+            userPropietary = user;
+            user.tasks.push(task);
+            return user.save();
+        })
+        .then(result => {
             res.status(201).json({
                 message: 'Post created successfully!',
-                task: result
+                task: task,
+                userPropietary: { _id: userPropietary._id, name: userPropietary.name }
             });
         })
         .catch(err => {
@@ -100,7 +109,11 @@ exports.updateTask = (req, res, next) => {
         error.statusCode = 422;
         throw error;
     }
-
+    if (post.userPropietary.toString() == req.userId) {
+        const error = new Error('Not authorized!');
+        error.statusCode = 403;
+        throw error;
+    }
     const title = req.body.title;
     const comments = req.body.comments; // This is comments
     const inbox = req.body.inbox;
@@ -181,8 +194,16 @@ exports.deleteTask = (req, res, next) => {
             return Task.findByIdAndRemove(taskId);
         })
         .then(result => {
-            console.log(result);
-            res.status(200).json({ message: 'Deleted task.' });
+            return User.findById(req.userId);
+        })
+        .then(user => {
+            user.tasks.pull(taskId);
+            return user.save();
+        })
+        .then(result => {
+            res.status(200).json({
+                message: 'Deleted task.'
+            });
         })
         .catch(err => {
             if (!err.statusCode) {

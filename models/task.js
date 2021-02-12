@@ -34,12 +34,13 @@ const taskSchema = new Schema({
         type: Object,
         required: false
     },
-    user: {
-        type: Object,
+    userPropietary: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     }
 },
-    {timestamps: true}
+    { timestamps: true }
 );
 
 module.exports = mongoose.model('Task', taskSchema);
