@@ -8,11 +8,13 @@ const router = express.Router();
 // GET /app/tasks/
 router.get('/tasks', tasksController.getTasks);
 
-// POST /app/post/
-router.post('/post', [
+// POST /app/create-task/
+router.post('/task', [
     body('title').trim().isLength({ min: 5 }),
     body('inbox').exists(),
     body('user').exists()
 ], tasksController.createTasks);
+
+router.get('/task/:taskId', tasksController.getTask);
 
 module.exports = router;
