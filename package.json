@@ -1,0 +1,20 @@
+{
+  "name": "todo-track-api-polpo-challenge",
+  "version": "1.0.0",
+  "description": "A CRUD API made for a ToDo Application with JS Technologies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": "https://github.com/CosmicTiger/todo-track-api-polpo-challenge",
+  "author": "@CosmicTiger",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
